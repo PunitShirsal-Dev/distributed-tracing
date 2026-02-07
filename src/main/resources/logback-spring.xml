@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Console Appender with trace context -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) [%15.15t] %clr(%-40.40logger{39}){cyan} : [traceId=%X{traceId:-}, spanId=%X{spanId:-}, userId=%X{user-id:-}] %m%n%wex</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Special configuration for tracing -->
+    <logger name="org.springframework.cloud.sleuth" level="DEBUG"/>
+</configuration>

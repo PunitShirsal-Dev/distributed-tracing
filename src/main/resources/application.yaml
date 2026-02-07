@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: order-service
+
+  # Zipkin Configuration
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+    service:
+      name: ${spring.application.name}
+
+  # Sleuth Configuration
+  sleuth:
+    baggage:
+      remote-fields: user-id,tenant-id,correlation-id
+      correlation:
+        enabled: true
+        fields: user-id,tenant-id
+    propagation:
+      type: B3  # Use B3 propagation format (Zipkin standard)
+    sampler:
+      probability: 1.0  # Sample 100% in dev, use 0.1 (10%) in production
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus,loggers
+  tracing:
+    sampling:
+      probability: 1.0  # Must match sleuth.sampler.probability
+
+# Logging with trace correlation
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId:-},%X{spanId:-},%X{user-id:-},%X{tenant-id:-}]"
+  level:
+    com.example.tracing: DEBUG
+    org.springframework.cloud.sleuth: DEBUG
+
+# Server configuration
+server:
+  port: 8080
